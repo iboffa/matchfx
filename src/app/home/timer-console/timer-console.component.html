@@ -1,0 +1,27 @@
+<div [formGroup]="timeForm" class="p-p-2">
+  <div class="p-d-flex p-jc-between">
+    <span class="p-float-label">
+      <input type="text" pInputText formControlName="period" id="period">
+      <label for="period">Period</label>
+    </span>
+    <div>
+      <p-inputNumber formControlName="minutes" [showButtons]="true" size="1" min="0" inputStyleClass="mousetrap">
+      </p-inputNumber>
+      <span>:</span>
+      <p-inputNumber formControlName="seconds" [showButtons]="true" size="1" min="0" max="59"
+        inputStyleClass="mousetrap">
+      </p-inputNumber>
+    </div>
+  </div>
+  <div class="p-d-flex p-mt-4 p-jc-between">
+    <div>
+      <p-selectButton [options]="directions" formControlName="direction"></p-selectButton>
+    </div>
+    <div>
+      <button pButton icon="pi pi-play" class="p-button-success" label="Run" (click)="run()" *ngIf="!(running$|async)"
+        [disabled]="expired$|async" pTooltip="Press SPACE to toggle" tooltipPosition="left"></button>
+      <button pButton icon="pi pi-pause" class="p-button-danger" label="Stop" (click)="stop()"
+        *ngIf="!!(running$|async)" pTooltip="Press SPACE to toggle" tooltipPosition="left"></button>
+    </div>
+  </div>
+</div>

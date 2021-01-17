@@ -1,0 +1,26 @@
+<div style="height: 480px; width: 640px; position:relative">
+  <video #video [srcObject]="stream" (loadedmetadata)="play()"></video>
+  <div class="container">
+    <div [ngStyle]="scoreStyle" id="score">
+      <div [ngStyle]="rowStyle"><span  *ngIf="!!home" [ngStyle]="scoreItemStyle" class="text">{{home.points}}</span>
+      </div>
+      <div [ngStyle]="rowStyle"><span  *ngIf="!!away" [ngStyle]="scoreItemStyle" class="text">{{away.points}}</span>
+      </div>
+    </div>
+    <div [ngStyle]="teamsStyle" id="teams">
+      <div [ngStyle]="rowStyle"><span *ngIf="!!home" [ngStyle]="teamItemStyle" class="text">{{home.name}}</span></div>
+      <div [ngStyle]="rowStyle"><span *ngIf="!!away" [ngStyle]="teamItemStyle" class="text">{{away.name}}</span></div>
+    </div>
+    <div [ngStyle]="circleStyle" id="timer">
+      <div [ngStyle]="rowStyle"><span [ngStyle]="timerItemStyle" *ngIf="!!period" class="text">{{period}}</span></div>
+      <div [ngStyle]="rowStyle">
+        <div [ngStyle]="timerItemStyle" class="text">
+          <span *ngIf="!!timer">{{timer.minutes}}</span>
+          <span>:</span>
+          <span *ngIf="!!timer">{{timer.seconds}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
