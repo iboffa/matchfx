@@ -1,21 +1,21 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import * as child from "child_process";
+// import * as child from "child_process";
 import * as path from "path";
 import * as url from "url";
 
-import { StreamingInfo } from "./src/models/models";
-import moment from "moment";
 import { Team } from "./src/app/models/team";
 import { TimerStatus } from "./src/app/models/timer-status";
+import { StreamingInfo } from "./src/app/models/streaming-info";
 
 let win: BrowserWindow = null;
 let graphics: BrowserWindow = null;
-let ffmpeg: child.ChildProcess;
+let recorder: BrowserWindow = null;
+// let ffmpeg: child.ChildProcess;
 
 const args = process.argv.slice(1),
   serve = args.some((val) => val === "--serve");
 
-const YT_URL = "rtmp://a.rtmp.youtube.com/live2";
+// const YT_URL = "rtmp://a.rtmp.youtube.com/live2";
 
 function createWindow(): BrowserWindow {
   // const electronScreen = screen;
@@ -25,12 +25,12 @@ function createWindow(): BrowserWindow {
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: 455,
-    height: 520,
+    width: 850,
+    height: 685,
     resizable: false,
-    maximizable:false,
+    maximizable: false,
     autoHideMenuBar: true,
-    title:'Console',
+    title: "Console",
 
     webPreferences: {
       nodeIntegration: true,
@@ -41,16 +41,37 @@ function createWindow(): BrowserWindow {
   });
 
   graphics = new BrowserWindow({
-    width: 642,
-    height: 483,
+    width: 640,
+    height: 480,
     useContentSize: true,
-    title: 'Preview',
+    title: "Preview",
     autoHideMenuBar: true,
     closable: false,
     minimizable: false,
-    maximizable:false,
+    maximizable: false,
     fullscreenable: false,
     resizable: false,
+    skipTaskbar: true,
+    webPreferences: {
+      webSecurity: false,
+      nodeIntegration: true,
+      allowRunningInsecureContent: serve ? true : false,
+      contextIsolation: false, // false if you want to run 2e2 test with Spectron
+      enableRemoteModule: true, // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
+    },
+  });
+
+  recorder = new BrowserWindow({
+    // autoHideMenuBar: true,
+    closable: false,
+    minimizable: false,
+    maximizable: false,
+    fullscreenable: false,
+    resizable: false,
+    skipTaskbar: true,
+
+    // show: false,
+    title: "Recorder",
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
@@ -82,10 +103,16 @@ function createWindow(): BrowserWindow {
         hash: "/graphics",
       })
     );
+    recorder.loadURL(
+      url.format({
+        pathname: path.join(__dirname, "dist/index.html"),
+        protocol: "file:",
+        hash: "/recorder",
+      })
+    );
   }
 
-  //graphic updates
-
+  //IPC events
   ipcMain.on("home", (event, arg: Team) => {
     graphics.webContents.send("home", arg);
   });
@@ -106,7 +133,24 @@ function createWindow(): BrowserWindow {
     graphics.webContents.send("period", arg);
   });
 
-  win.on("show", ()=>{
+  ipcMain.on("start-stream", (event, arg: StreamingInfo) => {
+    recorder.webContents.send("start-stream", arg);
+  });
+
+  ipcMain.on("stop-stream", () => {
+    recorder.webContents.send("stop-stream");
+  });
+
+  ipcMain.on("set-video-source", (event, arg)=>{
+    graphics.webContents.send("set-video-source", arg);
+  });
+
+  ipcMain.on("set-preview-size" ,(event, arg)=>{
+    graphics.setMinimumSize(arg.width, arg.height);
+    graphics.setSize(arg.width, arg.height);
+  });
+
+  win.on("show", () => {
     setTimeout(() => {
       win.focus();
     }, 200);
@@ -119,7 +163,12 @@ function createWindow(): BrowserWindow {
     // when you should delete the corresponding element.
     win = null;
     graphics = null;
+    recorder = null;
     app.exit();
+  });
+
+  graphics.on("show", () => {
+
   });
 
   return win;
@@ -150,77 +199,6 @@ try {
     }
   });
 
-
-
-
-
-  //Ipc streaming events
-
-  ipcMain.on("stream-start", (event, arg: StreamingInfo) => {
-    //spawn FFMPEG process
-
-    const ffmpegBaseParams = [
-      "-i",
-      "-",
-      "-c:v",
-      "libx264",
-      "-preset",
-      "ultrafast",
-      "-acodec",
-      "aac",
-      "-f",
-      "flv",
-      "-r",
-      "30",
-      "-g",
-      "60",
-      "-vf",
-      "format=yuv420p",
-      "-ar",
-      "44100",
-      "-threads",
-      "6",
-      "-qscale",
-      "3",
-    ];
-    const localParams = [
-      ...ffmpegBaseParams,
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `${app.getAppPath()}/video/${moment().format("YYYYMMDD[_]HHmmss")}.flv`,
-    ];
-    const ytParams = [...ffmpegBaseParams, `${YT_URL}/${arg.ytKey}`];
-    let ffmpegParams = [];
-    if (arg.youtube) {
-      ffmpegParams = [...ffmpegParams, ...ytParams];
-    }
-    // if(arg.facebook){
-
-    // }
-    if (arg.saveLocal) {
-      ffmpegParams = [...ffmpegParams, ...localParams];
-    }
-
-    ffmpeg = child.spawn("ffmpeg", ffmpegParams);
-    //Manage FFMPEG error
-    ffmpeg.on("close", (code, signal) => {
-      console.log(
-        `FFmpeg child process closed, code ${code}, signal ${signal}`
-      );
-    });
-    event.returnValue = true;
-  });
-
-  ipcMain.on("frame", (event, arg) => {
-    if (!ffmpeg.stdin.writableEnded) ffmpeg.stdin.write(arg);
-  });
-
-  ipcMain.on("stream-stop", () => {
-    ffmpeg.stdin.end();
-  });
-
-  ffmpeg.stdin.on("finish", () => {
-    ffmpeg.kill("SIGINT");
-  });
 } catch (e) {
   // Catch Error
   // throw e;

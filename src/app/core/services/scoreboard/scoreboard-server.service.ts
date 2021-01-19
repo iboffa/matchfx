@@ -35,7 +35,7 @@ export class ScoreboardServerService {
     sets: 0,
   });
 
-  private show$ = new BehaviorSubject<boolean>(true);
+  private show$ = new BehaviorSubject<boolean>(false);
   visible = this.show$.asObservable();
 
   get home(): Observable<Team> {

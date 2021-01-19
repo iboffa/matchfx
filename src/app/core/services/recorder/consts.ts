@@ -1,0 +1,26 @@
+export const YT_URL = "rtmp://a.rtmp.youtube.com/live2";
+
+export const ffmpegBaseParams = [
+  "-i",
+  "-",
+  "-c:v",
+  "libx264",
+  "-preset",
+  "ultrafast",
+  "-acodec",
+  "aac",
+  "-f",
+  "flv",
+  "-r",
+  "30",
+  "-g",
+  "60",
+  "-vf",
+  "format=yuv420p",
+  "-ar",
+  "44100",
+  "-threads",
+  "6",
+  "-qscale",
+  "3",
+];

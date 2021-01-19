@@ -1,0 +1,31 @@
+<div [formGroup]="scoreboardForm">
+  <p-checkbox label="Show scoreboard" formControlName="visible" binary="true" [style.margin]="0">
+  </p-checkbox>
+  <h2 class="p-mt-4">Scoreboard</h2>
+  <div class="p-p-2">
+    <div class="p-d-flex p-jc-between p-mt-4" formGroupName="home">
+      <span class="p-float-label">
+        <input id="homeName" type="text" pInputText formControlName="name">
+        <label for="homeName">Home</label>
+      </span>
+      <span class="p-float-label">
+        <p-inputNumber id="homeScore" formControlName="points" min="0" [showButtons]="true" size="2"
+          inputStyleClass="mousetrap"></p-inputNumber>
+        <label for="homeScore">Score</label>
+      </span>
+    </div>
+    <div class="p-d-flex p-jc-between p-mt-4" formGroupName="away">
+      <span class="p-float-label">
+        <input id="guestName" type="text" pInputText formControlName="name">
+        <label for="guestName">Guest</label>
+      </span>
+      <span class="p-float-label">
+        <p-inputNumber id="guestScore" formControlName="points" min="0" [showButtons]="true" size="2"
+          inputStyleClass="mousetrap">
+        </p-inputNumber>
+        <label for="guestScore">Score</label>
+      </span>
+    </div>
+  </div>
+
+</div>
