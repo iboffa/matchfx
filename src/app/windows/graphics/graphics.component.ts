@@ -134,9 +134,9 @@ export class GraphicsComponent implements OnInit, OnDestroy {
         this.cd.detectChanges();
       })
     );
-    this.scoreService.visible.subscribe((visible) =>
+    this.subsink.add(this.scoreService.visible.subscribe((visible) =>
       visible ? this.show() : this.hide()
-    );
+    ));
     navigator.getUserMedia(
       { video: true, audio: false },
       (stream) => {

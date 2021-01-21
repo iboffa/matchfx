@@ -7,9 +7,9 @@ To execute this application, run:
 
 ## Missing features
 
-### Streaming
+### Audio input
 
-Streaming feature is still unavailable. The idea is to applay Electron desktopCapturer features to stream current "Preview" window content.
+At the moment, it is not possible to switch microphone
 
 ### Customizable graphics
 
@@ -19,7 +19,5 @@ At the moment only available graphic is a scoreboard having a timer. The idea is
 
 There will be the possibility to show custom messages on video, with a style compliant to the graphic theme.
 
-### Camera selection
 
-It will be possible to use different cameras for the event broadcasting
 

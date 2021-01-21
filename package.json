@@ -1,7 +1,7 @@
 {
   "name": "match-fx",
   "version": "0.0.1",
-  "description": "Angular 11 with Electron (Typescript + SASS + Hot Reload)",
+  "description": "MatchFx",
   "author": {
     "name": "Igino Boffa"
   },

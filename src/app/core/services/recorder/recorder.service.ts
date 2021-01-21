@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { ChildProcess } from "child_process";
 import moment from "moment";
-import { from } from "rxjs";
+import { from, Observable, of, zip } from "rxjs";
 import { catchError, map, switchMap, take } from "rxjs/operators";
 import { ElectronService } from "../electron/electron.service";
 import * as path from "path";
 import { ffmpegBaseParams, YT_URL } from "./consts";
 import { StreamingInfo } from "../../../models/streaming-info";
+import { AppConfig } from "../../../../environments/environment";
 
 declare let MediaRecorder: any;
 
@@ -27,6 +28,7 @@ export class RecorderService {
     this.electron.ipcRenderer.on("stop-stream", () => {
       this.stopStream();
     });
+    this.electron.ipcRenderer.once("recorder-destroy",()=>this.stopStream());
   }
 
   init(): void {
@@ -48,15 +50,23 @@ export class RecorderService {
           };
         }),
         switchMap((constraints) => {
-          return from(
-            // Forced to cast to "any" as chromeMediaSource and chromeMediaSourceId are not standard WebRTC constraints
-            (<any>navigator.mediaDevices).getUserMedia(constraints)
+          // Forced to cast to "any" as chromeMediaSource and chromeMediaSourceId are not standard WebRTC constraints
+          return zip(
+            from(
+              navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+            ),
+            from((<any>navigator.mediaDevices).getUserMedia(constraints)) as Observable<MediaStream>
           );
+        }),
+        switchMap(([audioStream, videoStream]) => {
+          videoStream.addTrack(audioStream.getAudioTracks()[0]);
+          return of(videoStream);
         }),
         take(1)
       )
-      .subscribe((stream: MediaStream) => {
+      .subscribe((stream) => {
         // get stream from Preview window and creates recorder
+        console.log(stream);
         this.recorder = new MediaRecorder(stream, {
           mimeType: "video/webm;codecs=h264",
           videoBitsPerSecond: 3 * 1024 * 1024,
@@ -76,11 +86,9 @@ export class RecorderService {
   }
 
   private startStream(arg: StreamingInfo): void {
-    const videoDir = path.normalize(
-      this.electron.remote.app.getAppPath() + "/video"
-    );
+    const videoDir = path.normalize(this.getPath() + "/video");
     const localPath = path.normalize(
-      videoDir +"/"+ moment().format("YYYYMMDD[_]HHmmss") + ".flv"
+      videoDir + "/" + moment().format("YYYYMMDD[_]HHmmss") + ".flv"
     );
 
     const localParams = [...ffmpegBaseParams, localPath];
@@ -108,11 +116,11 @@ export class RecorderService {
 
   private spawnFfmpegProcess(options: string[]) {
     this.ffmpeg = this.electron.childProcess.spawn(
-      path.normalize(this.electron.remote.app.getAppPath() + "/ffmpeg.exe"),
+      path.normalize(this.getPath() + "/ffmpeg.exe"),
       options
     );
     this.ffmpeg.on("finish", () => this.ffmpeg.kill("SIGINT"));
-    this.recorder.start(10);
+    this.recorder.start(1000);
   }
 
   stopStream(): void {
@@ -120,4 +128,9 @@ export class RecorderService {
     if (this.ffmpeg && !this.ffmpeg.killed) this.ffmpeg.stdin.end();
   }
 
+  private getPath() {
+    return AppConfig.production
+      ? process.env.PORTABLE_EXECUTABLE_DIR
+      : this.electron.remote.app.getAppPath();
+  }
 }

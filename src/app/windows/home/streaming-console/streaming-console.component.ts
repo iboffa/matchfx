@@ -73,4 +73,8 @@ export class StreamingConsoleComponent implements OnInit {
   setVideoSource(event:any):void{
     this.evmg.sendEvent('set-video-source', event.value);
   }
+
+  setAudioSource(event:any):void{
+    this.evmg.sendEvent('set-audio-source', event.value);
+  }
 }

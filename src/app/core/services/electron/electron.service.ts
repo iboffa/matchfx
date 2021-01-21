@@ -15,7 +15,7 @@ export class ElectronService {
   remote: typeof remote;
   childProcess: typeof childProcess;
   fs: typeof fs;
-  desktopCapturer: typeof desktopCapturer
+  desktopCapturer: typeof desktopCapturer;
 
   get isElectron(): boolean {
     return !!(window && window.process && window.process.type);

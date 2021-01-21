@@ -30,7 +30,7 @@ function createWindow(): BrowserWindow {
     resizable: false,
     maximizable: false,
     autoHideMenuBar: true,
-    title: "Console",
+    title: "MatchFx",
 
     webPreferences: {
       nodeIntegration: true,
@@ -64,13 +64,13 @@ function createWindow(): BrowserWindow {
   recorder = new BrowserWindow({
     // autoHideMenuBar: true,
     closable: false,
+    // opacity:0,
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
     resizable: false,
     skipTaskbar: true,
-
-    // show: false,
+    show: false,
     title: "Recorder",
     webPreferences: {
       webSecurity: false,
@@ -145,6 +145,10 @@ function createWindow(): BrowserWindow {
     graphics.webContents.send("set-video-source", arg);
   });
 
+  ipcMain.on("set-audio-source", (event, arg)=>{
+    recorder.webContents.send("set-audio-source", arg);
+  });
+
   ipcMain.on("set-preview-size" ,(event, arg)=>{
     graphics.setMinimumSize(arg.width, arg.height);
     graphics.setSize(arg.width, arg.height);
@@ -167,8 +171,8 @@ function createWindow(): BrowserWindow {
     app.exit();
   });
 
-  graphics.on("show", () => {
-
+  recorder.once('close', ()=>{
+    recorder.webContents.send('recorder-destroy');
   });
 
   return win;

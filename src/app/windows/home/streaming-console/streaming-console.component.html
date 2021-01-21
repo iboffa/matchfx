@@ -7,7 +7,7 @@
       </span>
     </div>
     <div class="p-field p-col"><span class="p-float-label">
-        <p-dropdown id="audiosources" [options]="audioSources$|async" optionLabel="label" optionValue="deviceId"></p-dropdown>
+        <p-dropdown id="audiosources" [options]="audioSources$|async" optionLabel="label" optionValue="deviceId" (onChange)="setAudioSource($event)"></p-dropdown>
         <label for="audiosources">Video source</label>
       </span>
     </div>
