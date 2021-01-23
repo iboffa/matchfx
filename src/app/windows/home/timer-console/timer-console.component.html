@@ -5,21 +5,29 @@
       <label for="period">Period</label>
     </span>
     <div>
-      <p-inputNumber formControlName="minutes" [showButtons]="true" size="1" min="0" inputStyleClass="mousetrap">
-      </p-inputNumber>
-      <span>:</span>
-      <p-inputNumber formControlName="seconds" [showButtons]="true" size="1" min="0" max="59"
-        inputStyleClass="mousetrap">
-      </p-inputNumber>
-    </div>
-    <div>
       <p-selectButton [options]="directions" formControlName="direction"></p-selectButton>
     </div>
-    <div>
-      <button pButton icon="pi pi-play" class="p-button-success" label="Run" (click)="run()" *ngIf="!(running$|async)"
-        [disabled]="expired$|async" pTooltip="Press SPACE to toggle" tooltipPosition="left"></button>
-      <button pButton icon="pi pi-pause" class="p-button-danger" label="Stop" (click)="stop()"
-        *ngIf="!!(running$|async)" pTooltip="Press SPACE to toggle" tooltipPosition="left"></button>
+  </div>
+  <div class="p-d-flex p-jc-between p-mt-4">
+    <div [style.minWidth.px]=159 class="p-d-flex p-jc-between">
+      <span class="p-float-label">
+        <p-inputNumber id="minutes" formControlName="minutes" [showButtons]="true" size="1" min="0" inputStyleClass="mousetrap">
+        </p-inputNumber>
+        <label for="minutes">Minutes</label>
+      </span>
+      <span>:</span>
+      <span class="p-float-label">
+        <p-inputNumber id="seconds" formControlName="seconds" [showButtons]="true" size="1" min="0" max="59"
+          inputStyleClass="mousetrap">
+        </p-inputNumber>
+        <label for="seconds">Seconds</label>
+      </span>
     </div>
+
+    <button pButton icon="pi pi-play" class="p-button-success" label="Run" (click)="run()" *ngIf="!(running$|async)"
+      [disabled]="expired$|async" pTooltip="Press SPACE to toggle" tooltipPosition="left"></button>
+    <button pButton icon="pi pi-pause" class="p-button-danger" label="Stop" (click)="stop()" *ngIf="!!(running$|async)"
+      pTooltip="Press SPACE to toggle" tooltipPosition="left"></button>
+
   </div>
 </div>

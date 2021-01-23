@@ -1,8 +1,9 @@
 <div [formGroup]="scoreboardForm">
   <p-checkbox label="Show scoreboard" formControlName="visible" binary="true" [style.margin]="0">
   </p-checkbox>
+
   <h2 class="p-mt-4">Scoreboard</h2>
-  <div class="p-p-2">
+  <div class="p-pl-2 p-pr-2">
     <div class="p-d-flex p-jc-between p-mt-4" formGroupName="home">
       <span class="p-float-label">
         <input id="homeName" type="text" pInputText formControlName="name">
@@ -27,5 +28,4 @@
       </span>
     </div>
   </div>
-
 </div>

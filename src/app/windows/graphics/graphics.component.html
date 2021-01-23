@@ -14,7 +14,7 @@
     <div [ngStyle]="circleStyle" id="timer">
       <div [ngStyle]="rowStyle"><span [ngStyle]="timerItemStyle" *ngIf="!!period" class="text">{{period}}</span></div>
       <div [ngStyle]="rowStyle">
-        <div [ngStyle]="timerItemStyle" class="text">
+        <div [ngStyle]="timerItemStyle" class="text time">
           <span *ngIf="!!timer">{{timer.minutes}}</span>
           <span>:</span>
           <span *ngIf="!!timer">{{timer.seconds}}</span>

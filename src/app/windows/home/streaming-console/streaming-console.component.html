@@ -1,18 +1,18 @@
-<div [formGroup]="streamingForm">
-  <div class="p-grid p-mt-4">
-    <div class="p-field p-col">
+<div [formGroup]="streamingForm" class="p-p-2">
+  <div class="p-d-flex p-jc-between">
+    <div >
       <span class="p-float-label">
         <p-dropdown id="videosources" [options]="videoSources$|async" optionLabel="label" optionValue="deviceId" (onChange)="setVideoSource($event)"></p-dropdown>
         <label for="videosources">Video source</label>
       </span>
     </div>
-    <div class="p-field p-col"><span class="p-float-label">
+    <div><span class="p-float-label">
         <p-dropdown id="audiosources" [options]="audioSources$|async" optionLabel="label" optionValue="deviceId" (onChange)="setAudioSource($event)"></p-dropdown>
-        <label for="audiosources">Video source</label>
+        <label for="audiosources">Audio source</label>
       </span>
     </div>
   </div>
-  <div class="p-d-flex p-jc-between">
+  <div class="p-d-flex p-jc-between p-mt-4">
     <p-checkbox label="Stream to YouTube" formControlName="youtube" binary="true" [style.margin]="0">
     </p-checkbox>
     <span class="p-float-label">
@@ -20,7 +20,7 @@
       <label for="ytKey">Stream key</label>
     </span>
   </div>
-  <div class="p-d-flex p-jc-between p-mt-3">
+  <div class="p-d-flex p-jc-between p-mt-4">
     <p-checkbox label="Save video locally" formControlName="saveLocal" binary="true" [style.margin]="0">
     </p-checkbox>
     <button pButton [disabled]="streamingForm.invalid" icon="pi pi-play" class="p-button-success" label="Stream"

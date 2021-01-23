@@ -3,8 +3,7 @@
 export const rowStyle = {
   height: "50%",
   width: "100%",
-  fontFamily: "'Teko', sans-serif",
-  textTransform: "uppercase",
+  fontFamily: "'Fjalla One', sans-serif",
 };
 
 export const scoreItemStyle = {
