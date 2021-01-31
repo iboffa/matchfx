@@ -7,6 +7,7 @@ import { ScoreboardConsoleComponent } from "./scoreboard-console/scoreboard-cons
 import { TimerConsoleComponent } from "./timer-console/timer-console.component";
 import { MessageConsoleComponent } from "./message-console/message-console.component";
 import { StreamingConsoleComponent } from "./streaming-console/streaming-console.component";
+import { PreviewComponent} from "./preview/preview.component";
 
 import { RouterModule, Routes } from "@angular/router";
 
@@ -17,6 +18,7 @@ import { SelectButtonModule } from "primeng/selectbutton";
 import { CheckboxModule } from "primeng/checkbox";
 import { TooltipModule } from "primeng/tooltip";
 import { DropdownModule } from "primeng/dropdown";
+import {SliderModule} from 'primeng/slider';
 
 import { ReactiveFormsModule } from "@angular/forms";
 
@@ -41,14 +43,16 @@ const routes: Routes = [
     ReactiveFormsModule,
     CardModule,
     TooltipModule,
-    DropdownModule
+    DropdownModule,
+    SliderModule
   ],
   declarations: [
     HomeComponent,
     ScoreboardConsoleComponent,
     TimerConsoleComponent,
     MessageConsoleComponent,
-    StreamingConsoleComponent
+    StreamingConsoleComponent,
+    PreviewComponent
   ],
 })
 export class HomeModule {}

@@ -8,6 +8,7 @@ import * as path from "path";
 import { ffmpegBaseParams, YT_URL } from "./consts";
 import { StreamingInfo } from "../../../models/streaming-info";
 import { AppConfig } from "../../../../environments/environment";
+import { AudioVideoService } from "../audio-video/audio-video.service";
 
 declare let MediaRecorder: any;
 
@@ -17,8 +18,12 @@ declare let MediaRecorder: any;
 export class RecorderService {
   private ffmpeg: ChildProcess;
   private recorder: any;
+  private stream: MediaStream;
 
-  constructor(private electron: ElectronService) {
+  constructor(
+    private electron: ElectronService,
+    private avService: AudioVideoService
+  ) {
     this.electron.ipcRenderer.on(
       "start-stream",
       (event, arg: StreamingInfo) => {
@@ -28,7 +33,7 @@ export class RecorderService {
     this.electron.ipcRenderer.on("stop-stream", () => {
       this.stopStream();
     });
-    this.electron.ipcRenderer.once("recorder-destroy",()=>this.stopStream());
+    this.electron.ipcRenderer.once("recorder-destroy", () => this.stopStream());
   }
 
   init(): void {
@@ -51,23 +56,18 @@ export class RecorderService {
         }),
         switchMap((constraints) => {
           // Forced to cast to "any" as chromeMediaSource and chromeMediaSourceId are not standard WebRTC constraints
-          return zip(
-            from(
-              navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-            ),
-            from((<any>navigator.mediaDevices).getUserMedia(constraints)) as Observable<MediaStream>
-          );
+          return from(
+            (<any>navigator.mediaDevices).getUserMedia(constraints)
+          ) as Observable<MediaStream>;
         }),
-        switchMap(([audioStream, videoStream]) => {
-          videoStream.addTrack(audioStream.getAudioTracks()[0]);
+        switchMap((videoStream) => {
+          videoStream.addTrack(this.avService.mergedAudio.getAudioTracks()[0]);
           return of(videoStream);
-        }),
-        take(1)
+        })
       )
       .subscribe((stream) => {
-        // get stream from Preview window and creates recorder
-        console.log(stream);
-        this.recorder = new MediaRecorder(stream, {
+        this.stream = stream;
+        this.recorder = new MediaRecorder(this.stream, {
           mimeType: "video/webm;codecs=h264",
           videoBitsPerSecond: 3 * 1024 * 1024,
         });

@@ -1,12 +1,16 @@
 import { Component, OnInit } from "@angular/core";
 import {
+  AbstractControl,
+  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
   ValidationErrors,
+  Validators,
 } from "@angular/forms";
-import { from, Observable } from "rxjs";
+import { from, Observable, Subscription } from "rxjs";
 import { map } from "rxjs/operators";
+import { SubSink } from "subsink";
 import { EventManagerService } from "../../../core/services/event-manager.service";
 
 const streamingFormValidator: () => ValidationErrors = () => {
@@ -33,9 +37,11 @@ export class StreamingConsoleComponent implements OnInit {
   streamingForm: FormGroup;
   streaming = false;
 
-  videoSources$: Observable<any>;
-  audioSources$: Observable<any>;
-
+  sink = new SubSink();
+  videoSources$: Observable<MediaDeviceInfo[]>;
+  audioSources$: Observable<MediaDeviceInfo[]>;
+  mics: string[] = [];
+  microphonesForm: FormGroup;
   constructor(private evmg: EventManagerService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -51,6 +57,8 @@ export class StreamingConsoleComponent implements OnInit {
       }
     );
 
+    this.microphonesForm = new FormGroup({ microphones: new FormArray([]) });
+
     const devices = from(navigator.mediaDevices.enumerateDevices());
     this.videoSources$ = devices.pipe(
       map((devices) => devices.filter((device) => device.kind === "videoinput"))
@@ -58,6 +66,26 @@ export class StreamingConsoleComponent implements OnInit {
     this.audioSources$ = devices.pipe(
       map((devices) => devices.filter((device) => device.kind === "audioinput"))
     );
+    this.sink.add(
+      this.audioSources$.subscribe((devices) => {
+        devices.forEach((device) => {
+          this.mics.push(device.label);
+          // eslint-disable-next-line @typescript-eslint/unbound-method
+          const control = new FormControl(100, Validators.required);
+          control.valueChanges.subscribe((val) =>
+            this.evmg.sendEvent("set-audio-gain", {
+              deviceId: device.deviceId,
+              gain: val / 100,
+            })
+          );
+          (this.microphonesForm.get('microphones') as FormArray).push(control);
+        });
+      })
+    );
+  }
+
+  getMicrophones(): AbstractControl[] {
+    return  (this.microphonesForm.get('microphones') as FormArray).controls;
   }
 
   stream(): void {
@@ -70,11 +98,17 @@ export class StreamingConsoleComponent implements OnInit {
     this.streaming = false;
   }
 
-  setVideoSource(event:any):void{
-    this.evmg.sendEvent('set-video-source', event.value);
+  setVideoSource(event: any): void {
+    this.evmg.sendEvent("set-video-source", event.value);
   }
 
-  setAudioSource(event:any):void{
-    this.evmg.sendEvent('set-audio-source', event.value);
+  isStreamingButtonEnabled():boolean{
+    if (this.streamingForm.get('youtube').value && !this.streamingForm.get('ytKey').value){
+      return false;
+    }
+    if(!this.streamingForm.get('youtube').value && !this.streamingForm.get('saveLocal').value){
+      return false;
+    }
+    return true;
   }
 }

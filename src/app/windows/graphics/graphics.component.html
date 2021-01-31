@@ -1,6 +1,6 @@
 <div class="root">
-  <video #video [srcObject]="stream" (loadedmetadata)="play()"></video>
-  <div class="container">
+  <video #video [srcObject]="stream" (loadedmetadata)="play()" [muted]="true"></video>
+  <div class="container" id="scoreboard-timer">
     <div [ngStyle]="scoreStyle" id="score">
       <div [ngStyle]="rowStyle"><span *ngIf="!!home" [ngStyle]="scoreItemStyle" class="text">{{home.points}}</span>
       </div>
@@ -22,5 +22,8 @@
       </div>
     </div>
   </div>
-
+  <div id="message" class="message" >
+    <div *ngIf="!!(message$|async)" class="message-title">{{(message$|async).title}}</div>
+    <div *ngIf="!!(message$|async)" class="message-body">{{(message$|async).detail}}</div>
+  </div>
 </div>

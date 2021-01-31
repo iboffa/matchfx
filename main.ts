@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, screen } from "electron";
 // import * as child from "child_process";
 import * as path from "path";
 import * as url from "url";
@@ -6,6 +6,7 @@ import * as url from "url";
 import { Team } from "./src/app/models/team";
 import { TimerStatus } from "./src/app/models/timer-status";
 import { StreamingInfo } from "./src/app/models/streaming-info";
+import { AppConfig } from "./src/environments/environment";
 
 let win: BrowserWindow = null;
 let graphics: BrowserWindow = null;
@@ -25,15 +26,19 @@ function createWindow(): BrowserWindow {
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: 600,
-    height: 550,
-    resizable: false,
-    maximizable: false,
+
+    height: 800,
+    width: 1446,
+    // resizable: false,
+    maximizable: true,
+    // fullscreen: true,
+
     autoHideMenuBar: true,
     title: "MatchFx",
 
     webPreferences: {
       nodeIntegration: true,
+      devTools: !AppConfig.production,
       allowRunningInsecureContent: serve ? true : false,
       contextIsolation: false, // false if you want to run 2e2 test with Spectron
       enableRemoteModule: true, // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
@@ -46,12 +51,14 @@ function createWindow(): BrowserWindow {
     useContentSize: true,
     title: "Preview",
     autoHideMenuBar: true,
+    opacity:0,
     closable: false,
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
     resizable: false,
     skipTaskbar: true,
+    alwaysOnTop: true,
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
@@ -64,13 +71,13 @@ function createWindow(): BrowserWindow {
   recorder = new BrowserWindow({
     // autoHideMenuBar: true,
     closable: false,
-    // opacity:0,
+    opacity:0,
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
     resizable: false,
     skipTaskbar: true,
-    show: false,
+    // show: false,
     title: "Recorder",
     webPreferences: {
       webSecurity: false,
@@ -96,6 +103,7 @@ function createWindow(): BrowserWindow {
         hash: "/home",
       })
     );
+
     graphics.loadURL(
       url.format({
         pathname: path.join(__dirname, "dist/index.html"),
@@ -145,8 +153,12 @@ function createWindow(): BrowserWindow {
     graphics.webContents.send("set-video-source", arg);
   });
 
-  ipcMain.on("set-audio-source", (event, arg)=>{
-    recorder.webContents.send("set-audio-source", arg);
+  ipcMain.on("message", (event, arg)=>{
+    graphics.webContents.send("message", arg);
+  });
+
+  ipcMain.on("set-audio-gain", (event, arg)=>{
+    recorder.webContents.send("set-audio-gain", arg);
   });
 
   ipcMain.on("set-preview-size" ,(event, arg)=>{

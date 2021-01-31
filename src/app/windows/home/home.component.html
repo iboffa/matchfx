@@ -1,7 +1,20 @@
-<p-card>
-  <app-scoreboard-console></app-scoreboard-console>
-  <h2>Timer</h2>
-  <app-timer-console></app-timer-console>
-  <h2>Streaming Options</h2>
-  <app-streaming-console></app-streaming-console>
+<p-card [style.height.vh]=100>
+  <div class="p-grid p-jc-between" >
+    <div class="p-col">
+      <h2>Scoreboard</h2>
+      <app-scoreboard-console></app-scoreboard-console>
+      <h2>Timer</h2>
+      <app-timer-console></app-timer-console>
+      <h2>Message</h2>
+      <app-message-console></app-message-console>
+      <h2>Streaming Options</h2>
+      <app-streaming-console></app-streaming-console>
+    </div>
+    <div class="p-col-fixed" [style.width.px]=900>
+      <h2>Preview</h2>
+      <div [style.width.%]="100" [style.textAlign]="'center'">
+        <app-preview></app-preview>
+      </div>
+    </div>
+  </div>
 </p-card>

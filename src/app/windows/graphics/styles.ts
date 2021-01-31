@@ -29,8 +29,8 @@ export const scoreStyle = {
   overflow: "hidden",
   display: "block",
   position: "absolute",
-  bottom: "10px",
-  left: "10px"
+  bottom: "20px",
+  left: "20px"
 };
 
 export const teamsStyle = {
@@ -42,8 +42,8 @@ export const teamsStyle = {
   overflow: "hidden",
   display: "block",
   position: "absolute",
-  bottom: "10px",
-  left: "10px"
+  bottom: "20px",
+  left: "20px"
 };
 
 export const circleStyle = {
@@ -56,8 +56,8 @@ export const circleStyle = {
   zIndex: 3,
   display: "block",
   position: "absolute",
-  bottom: "10px",
-  left: "10px",
+  bottom: "20px",
+  left: "20px",
   textAlign: "center",
 };
 
@@ -67,17 +67,17 @@ export const timerItemStyle = {
 };
 
 export const top = {
-  top: "10px",
+  top: "20px",
 };
 
 export const bottom={
-  bottom: "10px",
+  bottom: "20px",
 };
 
 export const left={
-  left: "10px",
+  left: "20px",
 };
 
 export const right={
-  left: "10px"
+  left: "20px"
 };

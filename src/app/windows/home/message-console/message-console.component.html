@@ -1,1 +1,13 @@
-<p>TBD</p>
+<form [formGroup]="messageForm" class="p-p-2" (ngSubmit)="sendMessage()">
+  <div class="p-d-flex p-jc-between">
+    <span class="p-float-label">
+      <input type="text" pInputText formControlName="title" id="title">
+      <label for="title">Title</label>
+    </span>
+    <span class="p-float-label">
+      <input type="text" pInputText formControlName="detail" id="detail">
+      <label for="detail">Detail</label>
+    </span>
+    <p-button label="Send Message" type="submit" [disabled]="messageForm.invalid"></p-button>
+  </div>
+</form>

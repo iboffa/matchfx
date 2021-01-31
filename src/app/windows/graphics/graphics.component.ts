@@ -2,14 +2,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  DoCheck,
   ElementRef,
   OnDestroy,
   OnInit,
   ViewChild,
 } from "@angular/core";
 import { gsap } from "gsap";
-import { Observable } from "rxjs";
+import { EMPTY, Observable, of, timer } from "rxjs";
+import { concatMap, delay, filter, startWith, tap } from "rxjs/operators";
 import { SubSink } from "subsink";
 
 import { ScoreboardServerService } from "../../core/services/scoreboard/scoreboard-server.service";
@@ -27,6 +27,9 @@ import {
   timerItemStyle,
 } from "./styles";
 import { EventManagerService } from "../../core/services/event-manager.service";
+import { MessageService } from "../../core/services/message/message.service";
+import { Message } from "../../models/message";
+import { merge } from "rxjs";
 
 @Component({
   selector: "app-graphics",
@@ -58,10 +61,12 @@ export class GraphicsComponent implements OnInit, OnDestroy {
   period: string;
   timer: TimerStatus;
   stream: MediaStream;
+  message$: Observable<Message>;
 
   constructor(
     private scoreService: ScoreboardServerService,
     private timerService: TimerServerService,
+    private messageService: MessageService,
     private cd: ChangeDetectorRef,
     private avService: AudioVideoService,
     private evmg: EventManagerService
@@ -84,13 +89,25 @@ export class GraphicsComponent implements OnInit, OnDestroy {
     this.away$ = this.scoreService.away;
     this.period$ = this.timerService.period;
     this.timer$ = this.timerService.timer;
-    this.tl = gsap.timeline({
-      onUpdate: () => {
-        // this.graphicManager.setImage(this.el.nativeElement, this.tl.reversed())
-        // this.graphicService.setGraphics(this.el);
-      },
-      // paused: true
-    });
+    const gsapMakeOpaque = (_) => {
+      gsap
+        .fromTo("#message", { opacity: 0 }, { opacity: 1, duration: "0.5" })
+        .reverse()
+        .delay(5);
+    };
+
+    // Solution
+    this.message$ = this.messageService.message.pipe(
+      concatMap((msg) =>
+        EMPTY.pipe(
+          delay(6000),
+          startWith(msg),
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          tap(gsapMakeOpaque)
+        )
+      )
+    );
+    this.tl = gsap.timeline();
     this.tl.fromTo(
       ".container",
       { opacity: 0 },
@@ -134,9 +151,11 @@ export class GraphicsComponent implements OnInit, OnDestroy {
         this.cd.detectChanges();
       })
     );
-    this.subsink.add(this.scoreService.visible.subscribe((visible) =>
-      visible ? this.show() : this.hide()
-    ));
+    this.subsink.add(
+      this.scoreService.visible.subscribe((visible) =>
+        visible ? this.show() : this.hide()
+      )
+    );
     navigator.getUserMedia(
       { video: true, audio: false },
       (stream) => {
@@ -148,8 +167,11 @@ export class GraphicsComponent implements OnInit, OnDestroy {
 
     this.subsink.add(
       this.avService.videoSource.subscribe((videoSrc) => {
-        const srcInfo=videoSrc.getVideoTracks()[0].getSettings();
-        this.evmg.sendEvent('set-preview-size',{width:srcInfo.width, height: srcInfo.height});
+        const srcInfo = videoSrc.getVideoTracks()[0].getSettings();
+        this.evmg.sendEvent("set-preview-size", {
+          width: srcInfo.width,
+          height: srcInfo.height,
+        });
         this.stream = videoSrc;
         this.cd.detectChanges();
       })
