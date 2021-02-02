@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import { from, Observable, of, Subject, zip } from "rxjs";
 import {
-  concatMap,
   map,
+  mergeMap,
+  switchMap,
 } from "rxjs/operators";
 import { ElectronService } from "../electron/electron.service";
 
@@ -60,8 +61,8 @@ export class AudioVideoService {
           .filter((device) => device.kind === deviceKind)
           .map((device) => device.deviceId)
       ),
-      concatMap((deviceIds) => of(...deviceIds)),
-      concatMap((deviceId) =>
+      switchMap((deviceIds) => of(...deviceIds)),
+      mergeMap((deviceId) =>
         zip(
           of(deviceId),
           from(
