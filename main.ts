@@ -6,7 +6,7 @@ import * as url from "url";
 import { Team } from "./src/app/models/team";
 import { TimerStatus } from "./src/app/models/timer-status";
 import { StreamingInfo } from "./src/app/models/streaming-info";
-import { AppConfig } from "./src/environments/environment";
+
 
 let win: BrowserWindow = null;
 let graphics: BrowserWindow = null;
@@ -38,7 +38,7 @@ function createWindow(): BrowserWindow {
 
     webPreferences: {
       nodeIntegration: true,
-      devTools: !AppConfig.production,
+      devTools: false,
       allowRunningInsecureContent: serve ? true : false,
       contextIsolation: false, // false if you want to run 2e2 test with Spectron
       enableRemoteModule: true, // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
@@ -71,7 +71,7 @@ function createWindow(): BrowserWindow {
   recorder = new BrowserWindow({
     // autoHideMenuBar: true,
     closable: false,
-    opacity:0,
+    // opacity:0,
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
