@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import {
   AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   ValidationErrors,
   Validators,
 } from "@angular/forms";
@@ -14,7 +14,7 @@ import { SubSink } from "subsink";
 import { EventManagerService } from "../../../core/services/event-manager.service";
 
 const streamingFormValidator: () => ValidationErrors = () => {
-  return (form: FormGroup) => {
+  return (form: UntypedFormGroup) => {
     if (!(form.get("saveLocal").value || form.get("youtube").value)) {
       return { noOutputChannel: true };
     }
@@ -34,22 +34,22 @@ const streamingFormValidator: () => ValidationErrors = () => {
   styleUrls: ["./streaming-console.component.scss"],
 })
 export class StreamingConsoleComponent implements OnInit {
-  streamingForm: FormGroup;
+  streamingForm: UntypedFormGroup;
   streaming = false;
 
   sink = new SubSink();
   videoSources$: Observable<MediaDeviceInfo[]>;
   audioSources$: Observable<MediaDeviceInfo[]>;
   mics: string[] = [];
-  microphonesForm: FormGroup;
-  constructor(private evmg: EventManagerService, private fb: FormBuilder) {}
+  microphonesForm: UntypedFormGroup;
+  constructor(private evmg: EventManagerService, private fb: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     this.streamingForm = this.fb.group(
       {
-        saveLocal: new FormControl(true),
-        youtube: new FormControl(false),
-        ytKey: new FormControl(null),
+        saveLocal: new UntypedFormControl(true),
+        youtube: new UntypedFormControl(false),
+        ytKey: new UntypedFormControl(null),
       },
       // eslint-disable-next-line @typescript-eslint/unbound-method
       {
@@ -57,7 +57,7 @@ export class StreamingConsoleComponent implements OnInit {
       }
     );
 
-    this.microphonesForm = new FormGroup({ microphones: new FormArray([]) });
+    this.microphonesForm = new UntypedFormGroup({ microphones: new UntypedFormArray([]) });
 
     const devices = from(navigator.mediaDevices.enumerateDevices());
     this.videoSources$ = devices.pipe(
@@ -71,21 +71,21 @@ export class StreamingConsoleComponent implements OnInit {
         devices.forEach((device) => {
           this.mics.push(device.label);
           // eslint-disable-next-line @typescript-eslint/unbound-method
-          const control = new FormControl(100, Validators.required);
+          const control = new UntypedFormControl(100, Validators.required);
           control.valueChanges.subscribe((val) =>
             this.evmg.sendEvent("set-audio-gain", {
               deviceId: device.deviceId,
               gain: val / 100,
             })
           );
-          (this.microphonesForm.get('microphones') as FormArray).push(control);
+          (this.microphonesForm.get('microphones') as UntypedFormArray).push(control);
         });
       })
     );
   }
 
   getMicrophones(): AbstractControl[] {
-    return  (this.microphonesForm.get('microphones') as FormArray).controls;
+    return  (this.microphonesForm.get('microphones') as UntypedFormArray).controls;
   }
 
   stream(): void {

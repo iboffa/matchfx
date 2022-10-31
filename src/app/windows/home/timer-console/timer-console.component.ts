@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { SubSink } from "subsink";
 
 import * as Mousetrap from "mousetrap";
@@ -20,11 +20,11 @@ export class TimerConsoleComponent implements OnInit, OnDestroy {
     { label: "Up", value: "up" },
     { label: "Down", value: "down" },
   ];
-  timeForm = new FormGroup({
-    minutes: new FormControl(null, Validators.min(0)),
-    seconds: new FormControl(null, [Validators.min(0), Validators.max(59)]),
-    direction: new FormControl("up"),
-    period: new FormControl(""),
+  timeForm = new UntypedFormGroup({
+    minutes: new UntypedFormControl(null, Validators.min(0)),
+    seconds: new UntypedFormControl(null, [Validators.min(0), Validators.max(59)]),
+    direction: new UntypedFormControl("up"),
+    period: new UntypedFormControl(""),
   });
 
   constructor(private timer: TimerClientService) {}

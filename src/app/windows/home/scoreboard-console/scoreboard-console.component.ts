@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { AbstractControl, FormControl, FormGroup } from "@angular/forms";
+import { AbstractControl, UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 import { combineLatest } from "rxjs";
 import { debounceTime, take } from "rxjs/operators";
 import { ScoreboardServerService } from "../../../core/services/scoreboard/scoreboard-server.service";
@@ -13,23 +13,23 @@ import { Team } from "../../../models/team";
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScoreboardConsoleComponent implements OnInit {
-  scoreboardForm = new FormGroup({
-    visible: new FormControl(),
-    home: new FormGroup({
-      name: new FormControl(),
-      points: new FormControl(),
-      sets: new FormControl(),
-      fouls: new FormControl(),
-      bgColor: new FormControl(),
-      textColor: new FormControl(),
+  scoreboardForm = new UntypedFormGroup({
+    visible: new UntypedFormControl(),
+    home: new UntypedFormGroup({
+      name: new UntypedFormControl(),
+      points: new UntypedFormControl(),
+      sets: new UntypedFormControl(),
+      fouls: new UntypedFormControl(),
+      bgColor: new UntypedFormControl(),
+      textColor: new UntypedFormControl(),
     }),
-    away: new FormGroup({
-      name: new FormControl(),
-      points: new FormControl(),
-      sets: new FormControl(),
-      fouls: new FormControl(),
-      bgColor: new FormControl(),
-      textColor: new FormControl(),
+    away: new UntypedFormGroup({
+      name: new UntypedFormControl(),
+      points: new UntypedFormControl(),
+      sets: new UntypedFormControl(),
+      fouls: new UntypedFormControl(),
+      bgColor: new UntypedFormControl(),
+      textColor: new UntypedFormControl(),
     }),
   });
 
@@ -43,18 +43,18 @@ export class ScoreboardConsoleComponent implements OnInit {
     ])
       .pipe(take(1))
       .subscribe(([home, away, visible]) => {
-        (this.scoreboardForm.get("home") as FormGroup).patchValue(home);
-        (this.scoreboardForm.get("away") as FormGroup).patchValue(away);
+        (this.scoreboardForm.get("home") as UntypedFormGroup).patchValue(home);
+        (this.scoreboardForm.get("away") as UntypedFormGroup).patchValue(away);
         this.scoreboardForm.get("visible").setValue(visible);
       });
 
-    (this.scoreboardForm.get("home") as FormGroup).valueChanges
+    (this.scoreboardForm.get("home") as UntypedFormGroup).valueChanges
       .pipe(debounceTime(250))
       .subscribe((team: Team) => {
         console.log(team);
         this.scoreboardClient.setHome(team);
       });
-    (this.scoreboardForm.get("away") as FormGroup).valueChanges
+    (this.scoreboardForm.get("away") as UntypedFormGroup).valueChanges
       .pipe(debounceTime(250))
       .subscribe((team: Team) => {
         this.scoreboardClient.setAway(team);

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { EventManagerService } from '../../../core/services/event-manager.service';
 
 @Component({
@@ -11,11 +11,11 @@ export class MessageConsoleComponent  {
 
   constructor(private evmg:EventManagerService) { }
 
-  messageForm=new FormGroup({
+  messageForm=new UntypedFormGroup({
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    title: new FormControl(null, Validators.required),
+    title: new UntypedFormControl(null, Validators.required),
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    detail: new FormControl(null, Validators.required)
+    detail: new UntypedFormControl(null, Validators.required)
   });
 
   sendMessage():void{
