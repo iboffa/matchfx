@@ -23,7 +23,7 @@
     </div>
   </div>
   <div id="message" class="message" >
-    <div *ngIf="!!(message$|async)" class="message-title">{{(message$|async).title}}</div>
-    <div *ngIf="!!(message$|async)" class="message-body">{{(message$|async).detail}}</div>
+    <div *ngIf="message$|async" class="message-title">{{(message$|async).title}}</div>
+    <div *ngIf="message$|async" class="message-body">{{(message$|async).detail}}</div>
   </div>
 </div>

@@ -8,8 +8,8 @@ import {
   ViewChild,
 } from "@angular/core";
 import { gsap } from "gsap";
-import { EMPTY, Observable, of, timer } from "rxjs";
-import { concatMap, delay, filter, startWith, tap } from "rxjs/operators";
+import { EMPTY, Observable } from "rxjs";
+import { concatMap, delay, startWith, tap } from "rxjs/operators";
 import { SubSink } from "subsink";
 
 import { ScoreboardServerService } from "../../core/services/scoreboard/scoreboard-server.service";
@@ -29,7 +29,7 @@ import {
 import { EventManagerService } from "../../core/services/event-manager.service";
 import { MessageService } from "../../core/services/message/message.service";
 import { Message } from "../../models/message";
-import { merge } from "rxjs";
+
 
 @Component({
   selector: "app-graphics",
@@ -102,7 +102,6 @@ export class GraphicsComponent implements OnInit, OnDestroy {
         EMPTY.pipe(
           delay(6000),
           startWith(msg),
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           tap(gsapMakeOpaque)
         )
       )

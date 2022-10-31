@@ -39,7 +39,7 @@ function createWindow(): BrowserWindow {
     webPreferences: {
       nodeIntegration: true,
       devTools: false,
-      allowRunningInsecureContent: serve ? true : false,
+      allowRunningInsecureContent: serve,
       contextIsolation: false, // false if you want to run 2e2 test with Spectron
       enableRemoteModule: true, // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
     },
@@ -62,7 +62,7 @@ function createWindow(): BrowserWindow {
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
-      allowRunningInsecureContent: serve ? true : false,
+      allowRunningInsecureContent: serve,
       contextIsolation: false, // false if you want to run 2e2 test with Spectron
       enableRemoteModule: true, // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
     },
@@ -71,18 +71,18 @@ function createWindow(): BrowserWindow {
   recorder = new BrowserWindow({
     // autoHideMenuBar: true,
     closable: false,
-    // opacity:0,
+    opacity:0,
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
     resizable: false,
     skipTaskbar: true,
-    // show: false,
+    show: false,
     title: "Recorder",
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
-      allowRunningInsecureContent: serve ? true : false,
+      allowRunningInsecureContent: serve,
       contextIsolation: false, // false if you want to run 2e2 test with Spectron
       enableRemoteModule: true, // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
     },
